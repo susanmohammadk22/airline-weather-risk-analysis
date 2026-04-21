@@ -1,0 +1,9 @@
+data/
+weather_data_2025_full/
+output/
+*.csv
+*.png
+*.jpg
+.Rproj.user
+.Rhistory
+.RData
