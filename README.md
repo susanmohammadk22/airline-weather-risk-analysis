@@ -122,12 +122,13 @@ This project analyzes the impact of weather conditions on airline flight delays 
 
 ---
 
-## How to Run
-
-### Prerequisites
-
-Install required R packages:
+### Required R packages:
 
 ```r
 install.packages(c("tidyverse", "lubridate", "glmnet", "randomForest", "caret", "httr2", "fs"))
 
+### Data Sources
+
+- **Flight Data:** [Bureau of Transportation Statistics (BTS)](https://www.transtats.bts.gov) – On-Time Performance database (2025)
+- **Weather Data:** [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu) – ASOS 5-minute observations
+- **Weather API:** [NOAA Aviation Weather Center](https://aviationweather.gov) – METAR data for quality validation
