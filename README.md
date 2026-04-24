@@ -20,7 +20,7 @@ This project analyzes the impact of weather conditions on airline flight delays 
 
 **Airports Analyzed:** ATL, DFW, JFK, LAX, ORD, SFO
 
-
+**Challenges:** Time zone between station, updating schedule for weather data and flight data was not match. Matching data firstly in two separate data file was very challenging and then combination of flight and weather data was very hard and challenging too. In this regard I got help from AI (DeepSeek) to solve the problem.
 
 ---
 
@@ -50,12 +50,12 @@ This project analyzes the impact of weather conditions on airline flight delays 
 
 | Airport | High Risk (%) | Risk Level |
 |---------|--------------|------------|
-| **JFK** | **19.8%** | 🔴 Highest |
-| ATL | 10.9% | 🟠 High |
-| ORD | 10.7% | 🟠 High |
-| DFW | 9.9% | 🟡 Moderate |
-| LAX | 9.9% | 🟡 Moderate |
-| SFO | 0.0% | 🟢 Lowest |
+| **JFK** | **19.8%** |  Highest |
+| ATL | 10.9% |  High |
+| ORD | 10.7% |  High |
+| DFW | 9.9% |  Moderate |
+| LAX | 9.9% |  Moderate |
+| SFO | 0.0% |  Lowest |
 
 > JFK experiences nearly **double** the high-risk weather events compared to other major airports.
 
@@ -74,23 +74,23 @@ This project analyzes the impact of weather conditions on airline flight delays 
 
 | Feature | Coefficient | Impact |
 |---------|-------------|--------|
-| `is_DFW` | +2.60 min | ❌ Increases delay |
-| Wind Speed | +0.24 min/knot | ❌ Each knot adds 0.24 min |
-| Wind Gust | +0.09 min/knot | ❌ Each knot adds 0.09 min |
-| Visibility | -0.11 min/mile | ✅ Better visibility reduces delay |
-| `is_JFK` | -5.93 min | ✅ Reduces delay (vs baseline) |
-| `is_ATL` | -10.22 min | ✅ Reduces delay (vs baseline) |
+| `is_DFW` | +2.60 min |  Increases delay |
+| Wind Speed | +0.24 min/knot |  Each knot adds 0.24 min |
+| Wind Gust | +0.09 min/knot |  Each knot adds 0.09 min |
+| Visibility | -0.11 min/mile |  Better visibility reduces delay |
+| `is_JFK` | -5.93 min | Reduces delay (vs baseline) |
+| `is_ATL` | -10.22 min | Reduces delay (vs baseline) |
 
 ### 4. Random Forest Feature Importance
 
 | Feature | Importance | Interpretation |
 |---------|------------|----------------|
-| Wind Gust | 13,697 | 🔴 Most important predictor |
-| Wind Speed | 2,880 | 🔴 Second most important |
-| Ceiling Height | 1,196 | 🟠 Moderately important |
-| Visibility | 929 | 🟠 Moderately important |
-| Temperature | 187 | 🟡 Minor impact |
-| Airport (JFK) | 55 | 🟡 Minor impact |
+| Wind Gust | 13,697 | Most important predictor |
+| Wind Speed | 2,880 | Second most important |
+| Ceiling Height | 1,196 | Moderately important |
+| Visibility | 929 | Moderately important |
+| Temperature | 187 | Minor impact |
+| Airport (JFK) | 55 | Minor impact |
 
 ---
 
