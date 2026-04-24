@@ -106,19 +106,6 @@ This project analyzes the impact of weather conditions on airline flight delays 
 | Average Wind Speed | 8.5 knots |
 | Average Ceiling | 9,230 ft |
 
----
-
-## Visualizations
-
-| Figure | Description |
-|--------|-------------|
-| `p1_airport_risk.png` | High risk percentage by airport |
-| `p2_delay_by_weather.png` | Average delay by weather condition |
-| `p3_wind_delay.png` | Wind speed impact on delay |
-| `p4_visibility_delay.png` | Visibility impact on delay |
-| `p5_monthly_risk.png` | Seasonal pattern of high risk |
-| `p6_lasso_coefficients.png` | Lasso regression coefficients |
-| `p7_feature_importance.png` | Random Forest feature importance |
 
 ---
 
