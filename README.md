@@ -1,113 +1,122 @@
 # Aviation Weather Project
 
-## Overview
 
-This project analyzes the impact of weather conditions on airline flight delays and crew duty violations. The primary objective is to identify airport pairs that should not be assigned to the same pilot sequence due to elevated weather-related operational risk.
-
-**Key Research Questions:**
-- Which weather factors most significantly affect propagated flight delays?
-- Which airports face the highest weather-related operational risk?
-- How can airlines optimize crew scheduling to minimize weather-induced disruptions?
-
----
-
-## Data Sources
-
-| Source | Description | Year |
-|--------|-------------|------|
-| **BTS On-Time Performance** | Flight schedules, delays, and performance metrics for U.S. carriers | 2025 |
-| **Iowa Mesonet ASOS** | Automated surface weather observations (wind, visibility, ceiling, precipitation) | 2025 |
-
-**Airports Analyzed:** ATL, DFW, JFK, LAX, ORD, SFO
 
 **Challenges:** Time zone between station, updating schedule for weather data and flight data was not match. Matching data firstly in two separate data file was very challenging and then combination of flight and weather data was very hard and challenging too. In this regard I got help from AI (DeepSeek) to solve the problem.
 
+## The Problem
+
+A pilot flying from New York (JFK) to Dallas (DFW), then on to Los Angeles (LAX). The weather looks fine at JFK. But DFW is having thunderstorms, and LAX has heavy fog. The pilot arrives late, misses the connection, passengers are angry, and the crew exceeds legal duty hours.
+
+**This happens thousands of times per year.** And it costs airlines millions.
+
+I built this project to answer one question: **Which airport pairs should never be in the same pilot sequence during bad weather?**
+
 ---
 
-## Methodology
+## The Challenge
 
-### Variables
+When I started, I had two separate datasets:
 
-| Type | Variable | Description |
-|------|----------|-------------|
-| **Y₁** | Propagated Delay | `LATE_AIRCRAFT_DELAY` (minutes) from BTS |
-| **Y₂** | High Risk (AWR) | Binary: 1 if visibility < 3 miles, ceiling < 1000 ft, or gusts > 25 knots |
-| **X** | Weather Features | Temperature, visibility, wind speed, wind gust, ceiling height |
-| **Control** | Airport Indicators | Binary variables for JFK, ATL, ORD, DFW, LAX |
+| Data | Source | Format | Problem |
+|------|--------|--------|---------|
+| Flights | BTS | Local time (e.g., JFK 8:30 AM) | Times are airport-specific |
+| Weather | Iowa Mesonet | UTC (e.g., 13:30) | Times are global |
 
-### Models
+**The two datasets did not speak the same language.** Matching them required:
+1. Converting all flight times to UTC (accounting for Daylight Saving)
+2. Rounding weather observations to the nearest hour
+3. Handling missing values (weather sensors don't always report)
+4. Joining 1.2 million flights with 500,000 weather records
+
+**I used AI (DeepSeek) to help debug timezone conversions and join logic.** The hardest bug: only 0.25% of flights matched initially. The cause? Weather data had `tmpf = NA` for most rows because I didn't handle `'M'` (missing) values correctly.
+
+---
+
+## The Solution
+
+After cleaning, I built two models:
 
 | Model | Purpose | Algorithm |
 |-------|---------|-----------|
-| **Model 1** | Predict propagated delay | Lasso Regression (L1 regularization) |
-| **Model 2** | Predict high-risk conditions | Random Forest Classification |
+| **Model 1** | Predict how many minutes of delay weather will cause | Lasso Regression |
+| **Model 2** | Predict whether conditions are high-risk for crews | Random Forest |
+
+Lasso tells me how much each factor matters. Random Forest catches non-linear patterns that Lasso would miss.
 
 ---
 
-## Key Findings
+## Findings
 
-### 1. High Risk Weather by Airport
+### 1. JFK is the highest-risk airport
 
-| Airport | High Risk (%) | Risk Level |
-|---------|--------------|------------|
-| **JFK** | **19.8%** |  Highest |
-| ATL | 10.9% |  High |
-| ORD | 10.7% |  High |
-| DFW | 9.9% |  Moderate |
-| LAX | 9.9% |  Moderate |
-| SFO | 0.0% |  Lowest |
+| Airport | High Risk Weather (%) |
+|---------|----------------------|
+| JFK | **19.8%** |
+| ATL | 10.9% |
+| ORD | 10.7% |
+| DFW | 9.9% |
+| LAX | 9.9% |
+| SFO | 0% |
 
-> JFK experiences nearly **double** the high-risk weather events compared to other major airports.
+JFK has nearly double the risk of other airports.
 
-### 2. Impact of Weather on Delays
+### 2. Low visibility destroys schedules
 
-| Weather Condition | Average Delay (minutes) | vs. Normal |
-|-------------------|------------------------|------------|
-| Low Visibility | 31.2 | +4.2 min |
-| High Risk (AWR=1) | 29.5 | +2.5 min |
-| Normal Conditions | 27.0 | Baseline |
-| High Wind | 26.6 | -0.4 min |
+| Weather Condition | Average Delay | vs. Normal |
+|------------------|--------------|------------|
+| Low Visibility | 31.2 minutes | +4.2 min |
+| Normal | 27.0 minutes | Baseline |
 
-### 3. Lasso Regression Results
+One low-visibility morning at JFK adds 4 minutes to every connecting flight. That ripples across the entire network.
 
-**R-squared:** 0.69% (expected – weather explains only a small portion of total delay variation)
+### 3. Wind speed
 
-| Feature | Coefficient | Impact |
-|---------|-------------|--------|
-| `is_DFW` | +2.60 min |  Increases delay |
-| Wind Speed | +0.24 min/knot |  Each knot adds 0.24 min |
-| Wind Gust | +0.09 min/knot |  Each knot adds 0.09 min |
-| Visibility | -0.11 min/mile |  Better visibility reduces delay |
-| `is_JFK` | -5.93 min | Reduces delay (vs baseline) |
-| `is_ATL` | -10.22 min | Reduces delay (vs baseline) |
+From the Lasso model:
 
-### 4. Random Forest Feature Importance
+| Feature | Impact |
+|---------|--------|
+| Wind speed | +0.24 min per knot |
+| Wind gust | +0.09 min per knot |
+| Visibility | -0.11 min per mile (good visibility reduces delay) |
 
-| Feature | Importance | Interpretation |
-|---------|------------|----------------|
-| Wind Gust | 13,697 | Most important predictor |
-| Wind Speed | 2,880 | Second most important |
-| Ceiling Height | 1,196 | Moderately important |
-| Visibility | 929 | Moderately important |
-| Temperature | 187 | Minor impact |
-| Airport (JFK) | 55 | Minor impact |
+For every 10 knots of wind, add 2.4 minutes of buffer to your schedule.
+
+### 4. Random Forest confirms: wind matters most
+
+| Feature | Importance |
+|---------|------------|
+| Wind Gust | 13,697 |
+| Wind Speed | 2,880 |
+| Ceiling Height | 1,196 |
+| Visibility | 929 |
+
+Gusts are the #1 predictor of high-risk conditions. Not sustained wind. Not visibility. Gusts.
 
 ---
 
-## Summary Statistics
+## The Business Recommendations
+
+Based on these findings, I would tell an airline:
+
+| Recommendation | Reason |
+|----------------|-----|
+| Avoid JFK connections during low visibility | JFK has 19.8% high-risk weather |
+| Add 5-minute buffer for every 20 knots of wind | Wind speed adds 0.24 min/knot |
+| Reduce scheduled connections in spring and fall | Higher risk during these seasons |
+| Monitor gusts, not just sustained wind | Gusts are the #1 risk predictor |
+
+---
+
+## Technical Summary
 
 | Metric | Value |
 |--------|-------|
-| Total Flights Analyzed | 1,247,034 |
-| Weather Match Rate | 100% |
-| Average Propagated Delay | 27.5 minutes |
-| High Risk (AWR=1) | 11.2% |
-| Average Visibility | 9.4 miles |
-| Average Wind Speed | 8.5 knots |
-| Average Ceiling | 9,230 ft |
+| Total flights analyzed | 1,247,034 |
+| Weather match rate | 100% (after cleaning) |
+| Lasso R-squared | 0.48% (expected – weather explains little delay variance) |
+| Random Forest accuracy | 90.13% |
 
-
----
 
 ### Required R packages:
 
