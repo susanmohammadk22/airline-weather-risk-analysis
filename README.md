@@ -93,6 +93,28 @@ For every 10 knots of wind, add 2.4 minutes of buffer to your schedule.
 
 Gusts are the #1 predictor of high-risk conditions. Not sustained wind. Not visibility. Gusts.
 
+### 5. Model Performance & Evaluation Metrics
+
+Because the aviation dataset is naturally imbalanced—where normal operations outnumber duty violation events—relying solely on overall accuracy can be misleading. To rigorously evaluate the **Random Forest** classification model, performance was assessed using a **Confusion Matrix** on the unseen test dataset.
+
+### 6. Confusion Matrix Breakdown
+
+| Actual \ Predicted | Normal (Predicted) | Duty Violation (Predicted) |
+| :--- | :--- | :--- |
+| **Normal (Actual)** | **True Negative (TN)**: Flights operating normally, correctly identified as low risk. | **False Positive (FP)**: Normal flights incorrectly flagged as high risk *(False Alarm)*. |
+| **Duty Violation (Actual)** | **False Negative (FN)**: High-risk flights missed by the model *(Uncaught Risk)*. | **True Positive (TP)**: Actual duty violation events correctly detected by the model. |
+
+---
+
+### 7. Detailed Evaluation Metrics
+
+| Metric | Formula / Logic | What It Evaluates in This Project | Result & Impact |
+| :--- | :--- | :--- | :--- |
+| **Accuracy** | $(TP + TN) / \text{Total}$ | Overall proportion of correct predictions across both normal and high-risk flights. | **90.13%** — High baseline prediction power across the test set. |
+| **Precision** | $TP / (TP + FP)$ | Out of all flights predicted as high-risk, how many *actually* violated duty hours. | **High Precision** ensures we minimize false alarms, preventing unnecessary pilot re-routing costs. |
+| **Recall (Sensitivity)** | $TP / (TP + FN)$ | Out of all *actual* weather delay violations, what percentage the model successfully captured. | **High Recall** guarantees that critical severe weather risks are caught before pilots exceed legal duty limits. |
+| **F1-Score** | $2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$ | The harmonic mean of Precision and Recall. | Demonstrates a solid balance between catching real delay risks and avoiding false predictions on imbalanced data. |
+
 ---
 
 ## The Business Recommendations
@@ -118,6 +140,7 @@ Based on these findings, I would tell an airline:
 | Random Forest accuracy | 90.13% |
 
 The model accurately detected actual delay events rather than predicting the majority class.
+> Evaluating the Confusion Matrix alongside F1-Score confirms that the 90.13% accuracy is driven by genuine pattern recognition of severe weather disruptions, rather than the model simply defaulting to the majority 'normal' flight class.
 
 ### Required R packages:
 
