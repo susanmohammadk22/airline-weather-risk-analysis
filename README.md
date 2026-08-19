@@ -117,6 +117,7 @@ Based on these findings, I would tell an airline:
 | Lasso R-squared | 0.48% (expected – weather explains little delay variance) |
 | Random Forest accuracy | 90.13% |
 
+The model accurately detected actual delay events rather than predicting the majority class.
 
 ### Required R packages:
 
