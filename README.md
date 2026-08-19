@@ -95,7 +95,7 @@ Gusts are the #1 predictor of high-risk conditions. Not sustained wind. Not visi
 
 ### 5. Model Performance & Evaluation Metrics
 
-Because the aviation dataset is naturally imbalanced—where normal operations outnumber duty violation events—relying solely on overall accuracy can be misleading. To rigorously evaluate the **Random Forest** classification model, performance was assessed using a **Confusion Matrix** on the unseen test dataset.
+To rigorously evaluate the **Random Forest** classification model, performance was assessed using a **Confusion Matrix** on the unseen test dataset.
 
 ### 6. Confusion Matrix Breakdown
 
@@ -110,7 +110,7 @@ Because the aviation dataset is naturally imbalanced—where normal operations o
 
 | Metric | Formula / Logic | What It Evaluates in This Project | Result & Impact |
 | :--- | :--- | :--- | :--- |
-| **Accuracy** | $(TP + TN) / \text{Total}$ | Overall proportion of correct predictions across both normal and high-risk flights. | **90.13%** — High baseline prediction power across the test set. |
+| **Accuracy** | $(TP + TN) / \text{Total}$ | Overall proportion of correct predictions across both normal and high-risk flights. | **90.13%** Overall correct prediction rate across all test flights |
 | **Precision** | $TP / (TP + FP)$ | Out of all flights predicted as high-risk, how many *actually* violated duty hours. | **High Precision** ensures we minimize false alarms, preventing unnecessary pilot re-routing costs. |
 | **Recall (Sensitivity)** | $TP / (TP + FN)$ | Out of all *actual* weather delay violations, what percentage the model successfully captured. | **High Recall** guarantees that critical severe weather risks are caught before pilots exceed legal duty limits. |
 | **F1-Score** | $2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$ | The harmonic mean of Precision and Recall. | Demonstrates a solid balance between catching real delay risks and avoiding false predictions on imbalanced data. |
