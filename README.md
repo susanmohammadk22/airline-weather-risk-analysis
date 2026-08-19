@@ -140,7 +140,6 @@ Based on these findings, I would tell an airline:
 | Random Forest accuracy | 90.13% |
 
 The model accurately detected actual delay events rather than predicting the majority class.
-> Evaluating the Confusion Matrix alongside F1-Score confirms that the 90.13% accuracy is driven by genuine pattern recognition of severe weather disruptions, rather than the model simply defaulting to the majority 'normal' flight class.
 
 ### Required R packages:
 
